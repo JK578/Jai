@@ -1,5 +1,8 @@
 # Phase 1 implementation review
 
+Historical Phase 1A review. Its Phase 1B scope blocker has been addressed by
+[the Phase 1B implementation](phase1b-completion.md); original review results follow.
+
 Reviewed 2026-10-19 on native Windows in
 `C:\Users\Jayakrishna\Documents\Projects\IncidentIQ`.
 

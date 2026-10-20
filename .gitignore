@@ -20,3 +20,4 @@ npm-debug.log*
 *.key
 *.p12
 *.pfx
+.test-build/

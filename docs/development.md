@@ -73,6 +73,7 @@ Set-Location apps/web
 $env:Path = 'C:\Program Files\nodejs;' + $env:Path
 npm.cmd run lint
 npm.cmd run typecheck
+npm.cmd test
 npm.cmd run build
 Set-Location ../..
 .\.venv\Scripts\python.exe scripts/smoke.py
@@ -98,7 +99,8 @@ Do not run builds concurrently on an 8 GB machine. Next.js build worker count is
 and production builds use webpack to reduce native bundler variability on Windows.
 
 The smoke script starts temporary servers on ports 18000 and 13000, checks all three
-connectivity states over real HTTP, and stops its processes. Run it after building.
+connectivity states, incident create/list/detail/validation through the Next.js proxy,
+restart data loss and unavailable-API forwarding, then stops its processes. Run it after building.
 If Node is installed elsewhere, set `$env:NODE_EXE = (Get-Command node).Source` first.
 
 Known toolchain warnings: ESLint 9.39.5 is marked unsupported by npm; current Next.js
@@ -106,3 +108,17 @@ React and accessibility plugins do not declare ESLint 10 compatibility. Keep the
 compatible version until those plugins support 10; do not use --force or legacy-peer-deps.
 Starlette 1.9 emits a deprecation warning for its HTTPX TestClient path. HTTPX 0.28.1
 still executes successfully; migrate test transport deliberately when compatibility is verified.
+
+## Incident workflow
+
+Run both servers, open the home page, fill in title/description/service/severity, and
+create an incident. It appears in the list and its details open automatically. Select
+any title to load details. Refresh incidents reloads the list; failed requests have
+error/retry states. Restarting/reloading the backend clears every incident. Use one worker.
+Created/updated timestamps and IDs are assigned by the backend. Status starts open;
+editing and transitions are not implemented. See [API contracts](api.md).
+
+Frontend tests compile with the existing TypeScript compiler into ignored `.test-build/`
+and run serially using Node's built-in runner. React Testing Library/jsdom exercise DOM
+interaction without a browser download. Test dependencies are dev-only; run `npm.cmd ci`
+after pulling dependency-lock changes. No additional Python packages are required.

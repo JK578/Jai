@@ -1,5 +1,7 @@
 # Verification record
 
+Latest milestone: [Phase 1B completion and verification](phase1b-completion.md).
+
 This records the initial implementation run. For the subsequent review, minor fixes,
 eight-test result and current readiness recommendation, see [Phase 1 review](phase1-review.md).
 

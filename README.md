@@ -1,7 +1,8 @@
 # IncidentIQ
 
 AI-powered incident investigation platform for learning and portfolio development.
-This milestone implements only a FastAPI health API and a Next.js connectivity page.
+Phase 1B implements incident creation, listing and details, plus the health/connectivity slice.
+Storage is in memory: incidents disappear on backend restart/reload. Use one backend worker.
 No database, LLM, MCP, RAG, or LangGraph integration is installed or implemented.
 
 - [Windows setup and commands](docs/development.md)
@@ -10,6 +11,8 @@ No database, LLM, MCP, RAG, or LangGraph integration is installed or implemented
 - [Architecture decisions](docs/adr/)
 - [Verification record](docs/verification.md)
 - [Phase 1 implementation review](docs/phase1-review.md)
+- [Phase 1B completion and file inventory](docs/phase1b-completion.md)
+- [Incident API contracts](docs/api.md)
 
 ## Repository
 
@@ -21,7 +24,12 @@ apps/
     pyproject.toml
     requirements-dev.lock.txt
     src/incidentiq/{__init__,config,main}.py
+    src/incidentiq/domain/{__init__,incidents}.py
+    src/incidentiq/application/{__init__,incidents}.py
+    src/incidentiq/infrastructure/{__init__,memory}.py
+    src/incidentiq/api/{__init__,incidents}.py
     tests/test_health.py
+    tests/test_incidents.py
   web/
     .env.example
     package.json
@@ -33,16 +41,25 @@ apps/
     postcss.config.mjs
     src/app/{layout.tsx,page.tsx,globals.css}
     src/lib/backend.ts
+    src/lib/{incidents,incident-proxy}.ts
+    src/components/{create-incident-form,incident-workspace}.tsx
+    src/app/api/v1/incidents/route.ts
+    src/app/api/v1/incidents/[incident_id]/route.ts
+    tsconfig.test.json
+    tests/{setup.ts,fixtures.ts,incidents.test.ts,workspace.test.tsx}
 docs/
   architecture.md
   development.md
   roadmap.md
   verification.md
   phase1-review.md
+  phase1b-completion.md
+  api.md
   adr/0001-modular-monolith.md
   adr/0002-runtime-and-dependencies.md
   adr/0003-health-and-server-connectivity.md
   adr/0004-future-platform-boundaries.md
+  adr/0005-incident-domain-and-ephemeral-storage.md
 scripts/smoke.py
 .gitignore
 README.md

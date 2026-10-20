@@ -1,5 +1,6 @@
 """Exercise built Next.js and FastAPI over real loopback HTTP. No browser needed."""
 
+import json
 import os
 import subprocess
 import sys
@@ -7,14 +8,14 @@ import tempfile
 import time
 from pathlib import Path
 from urllib.error import HTTPError, URLError
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
 API_PORT = 18000
 WEB_PORT = 13000
 
 
-def get(url: str) -> tuple[int, str]:
+def get(url: str | Request) -> tuple[int, str]:
     try:
         with urlopen(url, timeout=6) as response:
             return response.status, response.read().decode()
@@ -94,11 +95,52 @@ def main() -> None:
                 page_code, html = get(web_url)
                 assert page_code == 200 and label in html, label
                 print(f"PASS: readiness {code}; frontend '{label}'")
+                if flag == "true":
+                    assert json.loads(get(f"{web_url}/api/v1/incidents")[1]) == []
+                    payload = {
+                        "title": "Smoke incident",
+                        "description": "Local HTTP workflow",
+                        "severity": "high",
+                        "service_name": "checkout-api",
+                    }
+                    create_code, created_body = get(
+                        Request(
+                            f"{web_url}/api/v1/incidents",
+                            data=json.dumps(payload).encode(),
+                            headers={"Content-Type": "application/json"},
+                            method="POST",
+                        )
+                    )
+                    assert create_code == 201
+                    created = json.loads(created_body)
+                    assert created["status"] == "open"
+                    assert json.loads(get(f"{web_url}/api/v1/incidents")[1]) == [created]
+                    detail_code, detail_body = get(f"{web_url}/api/v1/incidents/{created['id']}")
+                    assert detail_code == 200 and json.loads(detail_body) == created
+                    invalid_code, _ = get(
+                        Request(
+                            f"{web_url}/api/v1/incidents",
+                            data=b"{}",
+                            headers={"Content-Type": "application/json"},
+                            method="POST",
+                        )
+                    )
+                    assert invalid_code == 422
+                    assert (
+                        get(f"{web_url}/api/v1/incidents/00000000-0000-0000-0000-000000000000")[0]
+                        == 404
+                    )
+                    print("PASS: incident create/list/detail and validation through Next.js proxy")
+                else:
+                    assert json.loads(get(f"{web_url}/api/v1/incidents")[1]) == []
+                    print("PASS: backend restart clears in-memory incidents")
                 stop(api)
                 processes.remove(api)
             page_code, html = get(web_url)
             assert page_code == 200 and "Backend unavailable" in html
             print("PASS: stopped API; frontend 'Backend unavailable'")
+            assert get(f"{web_url}/api/v1/incidents")[0] == 502
+            print("PASS: stopped API; incident proxy returns 502")
         except BaseException:
             logs.seek(0)
             print(logs.read().decode(errors="replace"), file=sys.stderr)

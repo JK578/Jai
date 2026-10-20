@@ -10,7 +10,10 @@ from fastapi import FastAPI, Request, Response
 from pydantic import BaseModel
 from starlette.middleware.base import RequestResponseEndpoint
 
+from incidentiq.api.incidents import incident_router
+from incidentiq.application.incidents import IncidentRepository, IncidentService
 from incidentiq.config import Settings, load_settings
+from incidentiq.infrastructure.memory import InMemoryIncidentRepository
 
 logger = logging.getLogger("incidentiq")
 logger.setLevel(logging.INFO)
@@ -21,7 +24,10 @@ class HealthResponse(BaseModel):
     service: str = "incidentiq-api"
 
 
-def create_app(settings: Settings | None = None) -> FastAPI:
+def create_app(
+    settings: Settings | None = None,
+    repository: IncidentRepository | None = None,
+) -> FastAPI:
     config = settings if settings is not None else load_settings()
 
     @asynccontextmanager
@@ -35,6 +41,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app = FastAPI(title="IncidentIQ API", version="0.1.0", lifespan=lifespan)
     app.state.started = False
+    incident_repository = repository if repository is not None else InMemoryIncidentRepository()
+    app.include_router(incident_router(IncidentService(incident_repository)))
 
     @app.middleware("http")
     async def log_request(request: Request, call_next: RequestResponseEndpoint) -> Response:
