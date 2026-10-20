@@ -1,5 +1,7 @@
 # Verification record
 
+Latest milestone: [Phase 2A persistent storage and migration verification](phase2a-storage.md).
+
 Latest milestone: [Phase 1B completion and verification](phase1b-completion.md).
 
 This records the initial implementation run. For the subsequent review, minor fixes,

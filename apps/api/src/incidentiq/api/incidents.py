@@ -37,9 +37,18 @@ class IncidentResponse(BaseModel):
 
 
 def incident_router(service: IncidentService) -> APIRouter:
-    router = APIRouter(prefix="/api/v1/incidents", tags=["incidents"])
+    router = APIRouter(
+        prefix="/api/v1/incidents",
+        tags=["incidents"],
+        responses={503: {"description": "Incident storage unavailable"}},
+    )
 
-    @router.post("", response_model=IncidentResponse, status_code=201)
+    @router.post(
+        "",
+        response_model=IncidentResponse,
+        status_code=201,
+        responses={409: {"description": "Incident identity conflict"}},
+    )
     def create_incident(payload: CreateIncidentRequest, response: Response) -> IncidentResponse:
         incident = service.create(
             payload.title,

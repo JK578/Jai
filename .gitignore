@@ -2,6 +2,7 @@
 __pycache__/
 *.pyc
 .env
+apps/api/api.env
 .env.*
 !.env.example
 node_modules/
@@ -21,3 +22,4 @@ npm-debug.log*
 *.p12
 *.pfx
 .test-build/
+.pytest-db-*/

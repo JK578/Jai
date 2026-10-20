@@ -1,0 +1,11 @@
+{
+  "revision": "0001_incidents",
+  "columns": 8,
+  "check_constraints": 6,
+  "primary_key": "id",
+  "ordering_index_verified": true,
+  "rls_enabled": true,
+  "data_api_grants_revoked": true,
+  "unrelated_relation_count": 186,
+  "unrelated_metadata_unchanged": true
+}

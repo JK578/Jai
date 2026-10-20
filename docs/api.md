@@ -2,7 +2,8 @@
 
 Backend: `http://127.0.0.1:8000`. OpenAPI UI: `/docs`; schema: `/openapi.json`.
 The UI uses the same paths on its own origin via Next.js forwarding handlers.
-This is a local, unauthenticated demo API with nonpersistent, process-local storage.
+This is a local, unauthenticated development API. Auto mode uses PostgreSQL when DATABASE_URL
+is configured; explicit memory mode remains available for offline tests/demos.
 
 | Method | Path | Success | Failure |
 |---|---|---|---|
@@ -12,10 +13,17 @@ This is a local, unauthenticated demo API with nonpersistent, process-local stor
 | GET | /health/live | 200 alive | — |
 | GET | /health/ready | 200 ready | 503 not_ready |
 
+In PostgreSQL mode readiness checks connectivity and the mapped incident table. Its existing
+status/service fields are preserved, with an additive storage field (postgres or memory).
 Readiness is a probe signal; it does not gate incident operations. Next.js additionally
 returns 400 for malformed JSON and 502 for upstream 5xx/timeouts/network errors or
 unreadable JSON. Backend malformed JSON returns 422. Successful incident and health
 responses send `Cache-Control: no-store`.
+
+Database failures return 503 with `{"detail":"Incident storage unavailable"}`; identity
+conflicts return 409 with `{"detail":"Incident could not be stored"}`. Driver messages,
+SQL and connection credentials are never included. The Next.js proxy sanitizes upstream
+5xx responses to 502. There are no changes to incident request/response fields or success codes.
 
 ## Create request
 
@@ -67,5 +75,5 @@ Invoke-RestMethod 'http://127.0.0.1:8000/api/v1/incidents'
 Invoke-RestMethod "http://127.0.0.1:8000/api/v1/incidents/$($incident.id)"
 ```
 
-Data survives requests, not backend process restarts or `--reload`. Use one worker.
+PostgreSQL data survives backend restart/reload. Explicit memory data does not. Use one worker.
 Do not enter sensitive production incident data in this phase.

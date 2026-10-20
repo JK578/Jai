@@ -1,9 +1,10 @@
 # IncidentIQ
 
 AI-powered incident investigation platform for learning and portfolio development.
-Phase 1B implements incident creation, listing and details, plus the health/connectivity slice.
-Storage is in memory: incidents disappear on backend restart/reload. Use one backend worker.
-No database, LLM, MCP, RAG, or LangGraph integration is installed or implemented.
+Phase 2A persists incident creation, listing and details in Supabase PostgreSQL through
+SQLAlchemy. Alembic owns schema changes; startup never creates tables or runs migrations.
+With DATABASE_URL set, auto storage uses PostgreSQL. Explicit memory mode remains for
+offline demos/tests. No LLM, MCP, RAG or LangGraph integration is implemented.
 
 - [Windows setup and commands](docs/development.md)
 - [Architecture diagrams](docs/architecture.md)
@@ -13,6 +14,7 @@ No database, LLM, MCP, RAG, or LangGraph integration is installed or implemented
 - [Phase 1 implementation review](docs/phase1-review.md)
 - [Phase 1B completion and file inventory](docs/phase1b-completion.md)
 - [Incident API contracts](docs/api.md)
+- [Persistent storage completion and migration evidence](docs/phase2a-storage.md)
 
 ## Repository
 
@@ -26,10 +28,15 @@ apps/
     src/incidentiq/{__init__,config,main}.py
     src/incidentiq/domain/{__init__,incidents}.py
     src/incidentiq/application/{__init__,incidents}.py
-    src/incidentiq/infrastructure/{__init__,memory}.py
+    src/incidentiq/infrastructure/{__init__,memory,database,models,postgres}.py
     src/incidentiq/api/{__init__,incidents}.py
     tests/test_health.py
     tests/test_incidents.py
+    tests/{conftest,test_postgres,test_database_integration}.py
+    alembic.ini
+    migrations/env.py
+    migrations/script.py.mako
+    migrations/versions/0001_incidents.py
   web/
     .env.example
     package.json
@@ -47,6 +54,7 @@ apps/
     src/app/api/v1/incidents/[incident_id]/route.ts
     tsconfig.test.json
     tests/{setup.ts,fixtures.ts,incidents.test.ts,workspace.test.tsx}
+    tests/backend.test.ts
 docs/
   architecture.md
   development.md
@@ -55,17 +63,22 @@ docs/
   phase1-review.md
   phase1b-completion.md
   api.md
+  phase2a-verification.md
+  phase2a-storage.md
+  migrations/{0001_incidents.sql,inspection.json,applied.json}
   adr/0001-modular-monolith.md
   adr/0002-runtime-and-dependencies.md
   adr/0003-health-and-server-connectivity.md
   adr/0004-future-platform-boundaries.md
   adr/0005-incident-domain-and-ephemeral-storage.md
+  adr/0006-postgres-persistence-and-reviewed-migrations.md
 scripts/smoke.py
+scripts/{verify_database,manage_database}.py
 .gitignore
 README.md
 ```
 
 Use Python 3.15, Node 24 and npm 11. Run one backend worker and one frontend process.
-Never commit `.env`, `.env.local`, API keys or database credentials. `.env.example`
-contains only non-secret defaults. CI requires no cloud credentials. This is a foundation,
+Never commit `api.env`, `.env`, `.env.local`, API keys or database credentials. `.env.example`
+contains only non-secret defaults. CI uses memory mode and needs no cloud credentials. This is a foundation,
 not a production-ready enterprise application.

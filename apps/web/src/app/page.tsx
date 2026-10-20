@@ -1,10 +1,11 @@
-import { getBackendStatus } from "../lib/backend";
+import { getBackendHealth } from "../lib/backend";
 import IncidentWorkspace from "../components/incident-workspace";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const status = await getBackendStatus();
+  const health = await getBackendHealth();
+  const status = health.status;
   const label = {
     ready: "Connected · backend ready",
     not_ready: "Connected · backend not ready",
@@ -20,7 +21,11 @@ export default async function Home() {
       <section className="py-10">
         <p className="mb-5 text-sm font-medium uppercase tracking-widest text-teal-400">Platform foundation</p>
         <h1 className="max-w-2xl text-4xl font-semibold leading-tight">Incident workspace</h1>
-        <p className="mt-4 text-amber-200">Temporary local storage: incidents are lost when the backend restarts or reloads.</p>
+        <p className="mt-4 text-amber-200">{health.storage === "postgres"
+          ? "Incidents are saved to PostgreSQL and retained across backend restarts."
+          : health.storage === "memory"
+          ? "Temporary local storage: incidents are lost when the backend restarts or reloads."
+          : "Storage status is unavailable. Check backend connectivity before creating incidents."}</p>
         <div className="mt-10 rounded-xl border border-slate-800 bg-slate-900 p-6">
           <h2 className="text-sm text-slate-400">Backend connectivity</h2>
           <p role="status" className={`mt-2 text-lg ${status === "ready" ? "text-teal-400" : "text-amber-300"}`}>{label}</p>

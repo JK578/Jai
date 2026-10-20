@@ -1,5 +1,8 @@
 # Phase 1B completion
 
+Historical milestone record. Configured deployments now use
+[Phase 2A PostgreSQL persistence](phase2a-storage.md); memory mode remains for offline tests/demos.
+
 Implemented and verified on native Windows with Python 3.15.0 and Node 24.22.0.
 Scope ends at incident domain foundation. No Phase 2 or AI/cloud integrations were added.
 

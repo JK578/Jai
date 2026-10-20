@@ -5,7 +5,6 @@ from uuid import UUID, uuid4
 
 import pytest
 from fastapi.testclient import TestClient
-
 from incidentiq.application.incidents import IncidentNotFound, IncidentService
 from incidentiq.config import Settings
 from incidentiq.domain.incidents import Incident, IncidentStatus, Severity

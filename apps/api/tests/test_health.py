@@ -1,11 +1,11 @@
 import json
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
-from pydantic import ValidationError
-
 from incidentiq.config import Settings, load_settings
 from incidentiq.main import create_app
+from pydantic import ValidationError
 
 
 def test_health_contract_and_logging(caplog: pytest.LogCaptureFixture) -> None:
@@ -66,5 +66,21 @@ def test_readiness_failure_is_documented() -> None:
     responses = schema["paths"]["/health/ready"]["get"]["responses"]
     assert "503" in responses
     assert responses["503"]["content"]["application/json"]["schema"] == {
-        "$ref": "#/components/schemas/HealthResponse",
+        "$ref": "#/components/schemas/ReadinessResponse",
     }
+
+
+def test_api_env_loading_and_environment_precedence(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from incidentiq import config
+
+    path = tmp_path / "api.env"
+    path.write_text("INCIDENTIQ_ENV=test\nINCIDENTIQ_READY=false\n", encoding="utf-8")
+    monkeypatch.setattr(config, "ENV_FILE", path)
+    monkeypatch.delenv("INCIDENTIQ_ENV", raising=False)
+    monkeypatch.delenv("INCIDENTIQ_READY", raising=False)
+    assert load_settings() == Settings(environment="test", ready=False)
+    monkeypatch.setenv("INCIDENTIQ_READY", "true")
+    assert load_settings().ready is True

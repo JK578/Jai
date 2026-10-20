@@ -14,6 +14,14 @@ class IncidentNotFound(Exception):
     """The requested incident does not exist."""
 
 
+class IncidentStorageUnavailable(Exception):
+    """Storage operation failed; infrastructure details must remain private."""
+
+
+class IncidentConflict(Exception):
+    """An incident identity already exists."""
+
+
 class IncidentService:
     def __init__(self, repository: IncidentRepository) -> None:
         self._repository = repository

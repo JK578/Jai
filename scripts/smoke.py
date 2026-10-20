@@ -1,5 +1,6 @@
 """Exercise built Next.js and FastAPI over real loopback HTTP. No browser needed."""
 
+import argparse
 import json
 import os
 import subprocess
@@ -44,6 +45,13 @@ def stop(process: subprocess.Popen[bytes]) -> None:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--postgres",
+        action="store_true",
+        help="Opt-in live persistence test; retains one new evidence incident",
+    )
+    args = parser.parse_args()
     node = os.environ.get("NODE_EXE", r"C:\Program Files\nodejs\node.exe")
     api_url = f"http://127.0.0.1:{API_PORT}"
     web_url = f"http://127.0.0.1:{WEB_PORT}"
@@ -84,7 +92,11 @@ def main() -> None:
                         str(API_PORT),
                     ],
                     cwd=ROOT,
-                    env={**os.environ, "INCIDENTIQ_READY": flag},
+                    env={
+                        **os.environ,
+                        "INCIDENTIQ_READY": flag,
+                        "INCIDENTIQ_STORAGE": "postgres" if args.postgres else "memory",
+                    },
                     stdout=logs,
                     stderr=logs,
                 )
@@ -96,10 +108,13 @@ def main() -> None:
                 assert page_code == 200 and label in html, label
                 print(f"PASS: readiness {code}; frontend '{label}'")
                 if flag == "true":
-                    assert json.loads(get(f"{web_url}/api/v1/incidents")[1]) == []
+                    if not args.postgres:
+                        assert json.loads(get(f"{web_url}/api/v1/incidents")[1]) == []
                     payload = {
-                        "title": "Smoke incident",
-                        "description": "Local HTTP workflow",
+                        "title": "Persistence verification" if args.postgres else "Smoke incident",
+                        "description": "Development verification record; retained as evidence"
+                        if args.postgres
+                        else "Local HTTP workflow",
                         "severity": "high",
                         "service_name": "checkout-api",
                     }
@@ -114,7 +129,7 @@ def main() -> None:
                     assert create_code == 201
                     created = json.loads(created_body)
                     assert created["status"] == "open"
-                    assert json.loads(get(f"{web_url}/api/v1/incidents")[1]) == [created]
+                    assert created in json.loads(get(f"{web_url}/api/v1/incidents")[1])
                     detail_code, detail_body = get(f"{web_url}/api/v1/incidents/{created['id']}")
                     assert detail_code == 200 and json.loads(detail_body) == created
                     invalid_code, _ = get(
@@ -132,8 +147,16 @@ def main() -> None:
                     )
                     print("PASS: incident create/list/detail and validation through Next.js proxy")
                 else:
-                    assert json.loads(get(f"{web_url}/api/v1/incidents")[1]) == []
-                    print("PASS: backend restart clears in-memory incidents")
+                    if args.postgres:
+                        assert (
+                            json.loads(get(f"{web_url}/api/v1/incidents/{created['id']}")[1])
+                            == created
+                        )
+                        assert created in json.loads(get(f"{web_url}/api/v1/incidents")[1])
+                        print("PASS: incident persists after real backend process restart")
+                    else:
+                        assert json.loads(get(f"{web_url}/api/v1/incidents")[1]) == []
+                        print("PASS: backend restart clears in-memory incidents")
                 stop(api)
                 processes.remove(api)
             page_code, html = get(web_url)
