@@ -1,0 +1,10 @@
+{
+  "source": "0001_incidents",
+  "target": "0002_logs",
+  "database_identity_sha256": "d6a94d24a71c23147331f1adf8f0cdce987728fa5849581a34ae3603ee6fa1b2",
+  "unrelated_metadata_sha256": "c0c444c24d7439279a654cd02a621a1dbefbb79c3a7ddff3279612e2b5c9d672",
+  "unrelated_relation_count": 186,
+  "protected_tables": {
+    "incidents": "bb7718e03dd06732754bdef6e71f5424487f98dabffa390d53b66a1af9d2ed2a"
+  }
+}

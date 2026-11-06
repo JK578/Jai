@@ -1,0 +1,27 @@
+{
+  "id": "b753557f-ed88-474d-a3f6-197282aa5475",
+  "file_id": "a4116b4d-c724-5aeb-9a5e-e2cd983b1440",
+  "parser_version": "apache-error-v1",
+  "state": "completed",
+  "processed": 2000,
+  "inserted": 0,
+  "duplicates": 2000,
+  "rejected": 0,
+  "last_committed_line": 2000,
+  "started_at": "2026-10-21 16:40:20.262017+00:00",
+  "heartbeat_at": "2026-10-21 16:40:32.785313+00:00",
+  "lease_expires_at": "2026-10-21 16:41:32.785313+00:00",
+  "finished_at": "2026-10-21 16:40:34.366033+00:00",
+  "failure_code": null,
+  "memory": {
+    "baseline": {
+      "working_set_bytes": 94498816,
+      "peak_working_set_bytes": 94498816
+    },
+    "after": {
+      "working_set_bytes": 98783232,
+      "peak_working_set_bytes": 100528128
+    },
+    "peak_minus_baseline_working_set_bytes": 6029312
+  }
+}

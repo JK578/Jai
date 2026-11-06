@@ -4,7 +4,12 @@ AI-powered incident investigation platform for learning and portfolio developmen
 Phase 2A persists incident creation, listing and details in Supabase PostgreSQL through
 SQLAlchemy. Alembic owns schema changes; startup never creates tables or runs migrations.
 With DATABASE_URL set, auto storage uses PostgreSQL. Explicit memory mode remains for
-offline demos/tests. No LLM, MCP, RAG or LangGraph integration is implemented.
+offline demos/tests. Phase 3 adds an offline-tested model gateway with mock and OpenAI
+adapters and an explicit local CLI. Phase 4 adds live-validated persistent hybrid log
+retrieval and cited CLI search. MCP and LangGraph remain future work.
+
+- [Phase 3 model gateway and configuration](docs/phase3-model-gateway.md)
+- [Phase 4 retrieval completion and CLI usage](docs/phase4-completion.md)
 
 - [Windows setup and commands](docs/development.md)
 - [Architecture diagrams](docs/architecture.md)
@@ -15,6 +20,7 @@ offline demos/tests. No LLM, MCP, RAG or LangGraph integration is implemented.
 - [Phase 1B completion and file inventory](docs/phase1b-completion.md)
 - [Incident API contracts](docs/api.md)
 - [Persistent storage completion and migration evidence](docs/phase2a-storage.md)
+- [Phase 2B log ingestion and migration approval runbook](docs/phase2b-ingestion.md)
 
 ## Repository
 
@@ -37,6 +43,13 @@ apps/
     migrations/env.py
     migrations/script.py.mako
     migrations/versions/0001_incidents.py
+    migrations/versions/0002_logs.py
+    src/incidentiq/{domain/logs,application/log_ingestion,application/log_source}.py
+    src/incidentiq/infrastructure/{log_models,log_repository,log_source}.py
+    src/incidentiq/api/logs.py
+    src/incidentiq/datasets/{apache_2k.json,LOGHUB-LICENSE.txt}
+    tests/{log_fake,test_logs,test_log_repository,test_logs_database,test_migration_ranges}.py
+    tests/fixtures/
   web/
     .env.example
     package.json
@@ -74,6 +87,7 @@ docs/
   adr/0006-postgres-persistence-and-reviewed-migrations.md
 scripts/smoke.py
 scripts/{verify_database,manage_database}.py
+scripts/{ingest_logs,migration_catalog}.py
 .gitignore
 README.md
 ```
@@ -82,3 +96,10 @@ Use Python 3.15, Node 24 and npm 11. Run one backend worker and one frontend pro
 Never commit `api.env`, `.env`, `.env.local`, API keys or database credentials. `.env.example`
 contains only non-secret defaults. CI uses memory mode and needs no cloud credentials. This is a foundation,
 not a production-ready enterprise application.
+
+Phase 2B is live-validated in the approved Supabase development database. Migration 0002
+is applied; the pinned sample has 2,000 persisted events, with duplicate-safe replay,
+real worker interruption/resume, fencing and backend restart verified. Measured log
+storage is 1.22 MiB and maximum worker memory increase is 5.75 MiB. See the
+[live validation report](docs/phase2b-live-validation.md). Do not reapply the migration
+or rerun the one-time drill. There is no log UI or worker on API startup.

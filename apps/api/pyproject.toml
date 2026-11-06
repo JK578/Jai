@@ -6,14 +6,17 @@ build-backend = "setuptools.build_meta"
 name = "incidentiq-api"
 version = "0.1.0"
 requires-python = ">=3.15,<3.16"
-dependencies = ["fastapi==0.149.0", "pydantic==2.14.1", "uvicorn>=0.38,<1", "python-dotenv>=1.2,<2", "SQLAlchemy==2.1.5", "psycopg[binary]==3.3.6"]
+dependencies = ["fastapi==0.149.0", "pydantic==2.14.1", "uvicorn>=0.38,<1", "python-dotenv>=1.2,<2", "SQLAlchemy==2.1.5", "psycopg[binary]==3.3.6", "httpx==0.28.1"]
 
 [project.optional-dependencies]
 database = ["alembic==1.20.0"]
-dev = ["pytest>=9,<10", "httpx>=0.28,<1", "ruff>=0.14,<1"]
+dev = ["pytest>=9,<10", "ruff>=0.14,<1"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+incidentiq = ["datasets/*.json", "datasets/*.txt"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -23,3 +23,7 @@ npm-debug.log*
 *.pfx
 .test-build/
 .pytest-db-*/
+.pytest-phase*/
+.pytest-retrieval-live*/
+.cache/loghub/
+.cache/retrieval/

@@ -7,25 +7,25 @@ Set INCIDENTIQ_STORAGE=memory for an offline demo or postgres to require persist
 fail configuration validation when the URL is missing. No silent fallback occurs after
 selecting PostgreSQL. Keep URLs out of shell arguments and NEXT_PUBLIC variables.
 
-The configured development database already has revision 0001_incidents applied. Do not
+The configured development database already has revision 0002_logs applied. Do not
 reapply, stamp or reset it. To verify its state read-only:
 
 ```powershell
-.\.venv\Scripts\python.exe scripts/manage_database.py status
+.\.venv\Scripts\python.exe -m scripts.manage_database status --from-revision 0001_incidents --to-revision 0002_logs
 ```
 
 For a genuinely fresh development database only:
 
 ```powershell
-.\.venv\Scripts\python.exe scripts/manage_database.py inspect
-.\.venv\Scripts\python.exe scripts/manage_database.py plan
+.\.venv\Scripts\python.exe -m scripts.manage_database inspect --from-revision base --to-revision 0001_incidents
+.\.venv\Scripts\python.exe -m scripts.manage_database plan --from-revision base --to-revision 0001_incidents
 # Review docs/migrations/0001_incidents.sql and its printed SHA256 before continuing.
-.\.venv\Scripts\python.exe scripts/manage_database.py upgrade --reviewed-sha256 REVIEWED_SHA256
+.\.venv\Scripts\python.exe -m scripts.manage_database upgrade --from-revision base --to-revision 0001_incidents --reviewed-sha256 REVIEWED_SHA256
 ```
 
 The guard stops on existing application objects, schema drift or a mismatched SQL hash.
-Only the initial migration is supported by this guard; future revisions need a new reviewed
-plan. Direct online Alembic invocation and destructive initial downgrades are disabled.
+The guard supports explicit additive revision ranges with reviewed schema snapshots and
+SQL receipts. Direct online Alembic invocation and destructive initial downgrades are disabled.
 No create_all or automatic startup migrations are used. Offline SQL is credential-free.
 The table is incidentiq.incidents; public.incidentiq_alembic_version tracks revision state.
 The app pool allows two connections, zero overflow, pre-ping, five-second connection timeout,
@@ -46,7 +46,7 @@ Remove-Item Env:INCIDENTIQ_RUN_DB_TESTS
 DATABASE_TEST_URL may select a separate pre-migrated development DB for opt-in tests;
 otherwise they use api.env. Never put its value on a command line. Normal pytest and
 scripts/smoke.py stay isolated in memory mode. Auth, tenancy and a restricted backend
-database role remain Phase 2B work; keep this unauthenticated app on loopback.
+database role remain a separate access-control milestone; keep this app on loopback.
 
 ## Optional Phase 2A connection probe
 
@@ -195,3 +195,22 @@ Frontend tests compile with the existing TypeScript compiler into ignored `.test
 and run serially using Node's built-in runner. React Testing Library/jsdom exercise DOM
 interaction without a browser download. Test dependencies are dev-only; run `npm.cmd ci`
 after pulling dependency-lock changes. Python runtime/migration packages are pinned in the backend lock.
+
+## Phase 2B
+
+Approved live migration and validation are complete. See [measured results](phase2b-live-validation.md).
+The [ingestion/migration runbook](phase2b-ingestion.md) records the historical first application.
+The guard now requires explicit revision ranges; earlier Phase 2A command transcripts
+are historical. Use `python -m scripts.manage_database` from the repository root with
+the venv Python. API startup performs neither migrations nor ingestion.
+
+Offline commands:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest apps/api/tests -m 'not database' -q
+.\.venv\Scripts\python.exe -m scripts.manage_database plan --from-revision 0001_incidents --to-revision 0002_logs
+```
+
+Log integration tests require `INCIDENTIQ_RUN_LOG_DB_TESTS=1` and approved 0002. They roll
+back invented rows; they never migrate/create/reset tables. Leave opt-in variables unset
+in CI. No new dependencies or log UI are introduced.

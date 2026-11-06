@@ -1,0 +1,23 @@
+{
+  "documents": 2000,
+  "unique_messages": 886,
+  "new_embeddings": 0,
+  "cache_hits": 0,
+  "index_unchanged": true,
+  "before": {
+    "documents": 2000,
+    "index_sha256": "0a6d38fe644ee2b078729d2f12039e7fbca686ac06d778ad6c76375b41a6e65f",
+    "retrieval_storage_bytes": 6242304,
+    "source_events": 2000
+  },
+  "after": {
+    "documents": 2000,
+    "index_sha256": "0a6d38fe644ee2b078729d2f12039e7fbca686ac06d778ad6c76375b41a6e65f",
+    "retrieval_storage_bytes": 6242304,
+    "source_events": 2000
+  },
+  "budget_microusd": 100000,
+  "conservative_spent_microusd": 0,
+  "worker_peak_bytes": 114733056,
+  "worker_peak_minus_baseline_bytes": 15732736
+}

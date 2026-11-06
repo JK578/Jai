@@ -1,0 +1,16 @@
+{
+  "source_lines": 2000,
+  "persisted_events": 2000,
+  "rejected_lines": 0,
+  "replay_duplicates": 2000,
+  "run_states": {
+    "completed": 3
+  },
+  "storage_before_public_bytes": 253952,
+  "storage_final_bytes": 1277952,
+  "storage_increment_public_bytes": 1024000,
+  "storage_total_increment_since_0001_bytes": 1277952,
+  "measured_worker_peak_minus_baseline_bytes": 6029312,
+  "storage_target_pass": true,
+  "memory_target_pass": true
+}

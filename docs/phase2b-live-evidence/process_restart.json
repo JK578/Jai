@@ -1,0 +1,7 @@
+{
+  "distinct_api_processes": 2,
+  "persisted_events": 2000,
+  "all_event_ids_identical_after_restart": true,
+  "incident_count": 1,
+  "readiness_pass": true
+}

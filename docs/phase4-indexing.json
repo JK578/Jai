@@ -1,0 +1,22 @@
+{
+  "documents": 2000,
+  "unique_messages": 886,
+  "new_embeddings": 886,
+  "cache_hits": 0,
+  "before": {
+    "documents": 0,
+    "index_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "retrieval_storage_bytes": 73728,
+    "source_events": 2000
+  },
+  "after": {
+    "documents": 2000,
+    "index_sha256": "0a6d38fe644ee2b078729d2f12039e7fbca686ac06d778ad6c76375b41a6e65f",
+    "retrieval_storage_bytes": 6225920,
+    "source_events": 2000
+  },
+  "budget_microusd": 100000,
+  "conservative_spent_microusd": 12606,
+  "worker_peak_bytes": 180551680,
+  "worker_peak_minus_baseline_bytes": 82853888
+}

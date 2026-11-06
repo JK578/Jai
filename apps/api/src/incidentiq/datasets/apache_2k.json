@@ -1,0 +1,18 @@
+{
+  "slug": "loghub-apache-2k",
+  "name": "Loghub Apache error logs (2,000-line sample)",
+  "provider": "LOGPAI / Loghub",
+  "repository": "https://github.com/logpai/loghub",
+  "commit": "dd61d0952749ee7963bde24220d1be5ede023033",
+  "source_path": "Apache/Apache_2k.log",
+  "sha256": "c7efa3eb686e3a96bd2f8f4457b2a7887e9cf2f3649327f1b4e87af841363ce8",
+  "byte_count": 171239,
+  "line_count": 2000,
+  "parser_version": "apache-error-v1",
+  "retrieved_on": "2026-10-20",
+  "provenance_url": "https://github.com/logpai/loghub/blob/dd61d0952749ee7963bde24220d1be5ede023033/Apache/README.md",
+  "original_source_url": "https://log-sharing.dreamhosters.com/",
+  "license_name": "Loghub research/academic terms",
+  "license_url": "https://github.com/logpai/loghub/blob/dd61d0952749ee7963bde24220d1be5ede023033/LICENSE",
+  "timezone_name": null
+}

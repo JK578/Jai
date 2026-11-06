@@ -1,6 +1,7 @@
 """Offline generation never reads credentials; online mode requires a reviewed guard."""
 
 from alembic import context
+from incidentiq.infrastructure import log_models as log_models
 from incidentiq.infrastructure.models import Base
 
 config = context.config

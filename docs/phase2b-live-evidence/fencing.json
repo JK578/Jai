@@ -1,0 +1,7 @@
+{
+  "stale_commit_blocked": true,
+  "stale_fail_blocked": true,
+  "concurrent_claim_blocked": true,
+  "successor_completed": true,
+  "natural_lease_expiry": true
+}

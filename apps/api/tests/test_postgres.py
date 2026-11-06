@@ -118,7 +118,7 @@ def test_readiness_failure_closes_session() -> None:
 
 
 def test_offline_migration_only_targets_owned_objects() -> None:
-    sql = migration_sql()
+    sql = migration_sql("base", "0001_incidents")
     assert PLAN.read_text(encoding="utf-8") == sql
     assert "CREATE SCHEMA incidentiq" in sql
     assert "CREATE TABLE incidentiq.incidents" in sql
@@ -145,7 +145,7 @@ def test_initial_migration_stops_on_unexpected_objects(collision: str) -> None:
         if collision == "public_incidents"
         else False
     )
-    with patch("scripts.manage_database.inspect", return_value=inspector):
+    with patch("scripts.migration_catalog.inspect", return_value=inspector):
         with pytest.raises(RuntimeError):
             pristine(MagicMock())
 

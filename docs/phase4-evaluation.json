@@ -1,0 +1,71 @@
+{
+  "fixture_sha256": "bf67784724309ce2174ecbbba327c438e7b9533ab84b3e67b3202f8eade92924",
+  "embedding_model": "curated-fixture-v1",
+  "scope": "Controlled ranking mechanics only; not semantic model quality.",
+  "documents": 3,
+  "queries": 3,
+  "metrics": {
+    "keyword": {
+      "recall_at_1": 0.333333,
+      "mrr": 0.333333
+    },
+    "vector": {
+      "recall_at_1": 1.0,
+      "mrr": 1.0
+    },
+    "hybrid": {
+      "recall_at_1": 1.0,
+      "mrr": 1.0
+    }
+  },
+  "results": [
+    {
+      "query": "restart",
+      "relevant_lines": [
+        1
+      ],
+      "ranked_lines": {
+        "hybrid": [
+          1
+        ],
+        "keyword": [],
+        "vector": [
+          1
+        ]
+      }
+    },
+    {
+      "query": "permissions",
+      "relevant_lines": [
+        2
+      ],
+      "ranked_lines": {
+        "hybrid": [
+          2
+        ],
+        "keyword": [],
+        "vector": [
+          2
+        ]
+      }
+    },
+    {
+      "query": "healthy",
+      "relevant_lines": [
+        3
+      ],
+      "ranked_lines": {
+        "hybrid": [
+          3
+        ],
+        "keyword": [
+          3
+        ],
+        "vector": [
+          3
+        ]
+      }
+    }
+  ],
+  "deletion_verified": true
+}

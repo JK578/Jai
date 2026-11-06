@@ -1,0 +1,15 @@
+{
+  "version": "apache2k-retrieval-v1",
+  "file_sha256": "c7efa3eb686e3a96bd2f8f4457b2a7887e9cf2f3649327f1b4e87af841363ce8",
+  "label_method": "Manually specified source-message regex criteria, frozen before retrieval evaluation. Small development set, not independently annotated benchmark.",
+  "queries": [
+    {"query": "workerEnv error state 6", "relevant_pattern": "mod_jk child workerEnv in error state 6$", "kind": "literal"},
+    {"query": "workerEnv error state 10", "relevant_pattern": "mod_jk child workerEnv in error state 10$", "kind": "literal"},
+    {"query": "workerEnv init workers2 properties", "relevant_pattern": "workerEnv\\.init\\(\\) ok", "kind": "literal"},
+    {"query": "mod_jk child init", "relevant_pattern": "mod_jk child init", "kind": "literal"},
+    {"query": "scoreboard slot 7", "relevant_pattern": "jk2_init\\(\\) Found child .* scoreboard slot 7$", "kind": "literal"},
+    {"query": "connector worker environment failed", "relevant_pattern": "mod_jk child workerEnv in error state", "kind": "paraphrase"},
+    {"query": "successful worker environment initialization", "relevant_pattern": "workerEnv\\.init\\(\\) ok", "kind": "paraphrase"},
+    {"query": "child process registered in scoreboard", "relevant_pattern": "jk2_init\\(\\) Found child", "kind": "paraphrase"}
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "read_only": true,
+  "extensions_schema_exists": true,
+  "revision": "0003_retrieval",
+  "retrieval_documents": 0,
+  "vector_available_version": "0.8.2",
+  "vector_installed_version": "0.8.2",
+  "vector_schema": "extensions",
+  "database_bytes": 12711603,
+  "headroom_below_400mib": 406718797,
+  "log_events": 2000,
+  "events_requiring_chunking": 0,
+  "rollback_integration_tests_passed": 1
+}

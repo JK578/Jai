@@ -1,0 +1,15 @@
+{
+  "schema_verified": true,
+  "protected_source_tables_unchanged": true,
+  "unrelated_relation_metadata_unchanged": true,
+  "replay_no_api_calls": true,
+  "fresh_process_persistence_passed": true,
+  "index": {
+    "documents": 2000,
+    "index_sha256": "0a6d38fe644ee2b078729d2f12039e7fbca686ac06d778ad6c76375b41a6e65f",
+    "retrieval_storage_bytes": 6373376,
+    "source_events": 2000
+  },
+  "storage_below_10mib": true,
+  "worker_increment_below_100mib": true
+}

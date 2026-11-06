@@ -1,0 +1,22 @@
+{
+  "development_project_match": true,
+  "ssl": true,
+  "revision": "0002_logs",
+  "incident_integrity": {
+    "count": 1,
+    "sha256": "2df093db77be7cd85bed2737d26fcf3070ebb9f8f58d97785a6264884a5ae027"
+  },
+  "unrelated_metadata_sha256": "c0c444c24d7439279a654cd02a621a1dbefbb79c3a7ddff3279612e2b5c9d672",
+  "unrelated_relation_count": 186,
+  "tables": [
+    "log_files",
+    "incidents",
+    "log_datasets",
+    "log_events",
+    "log_ingestion_runs",
+    "log_ingestion_errors"
+  ],
+  "log_storage_bytes": 1277952,
+  "incident_integrity_unchanged": true,
+  "unrelated_metadata_unchanged": true
+}

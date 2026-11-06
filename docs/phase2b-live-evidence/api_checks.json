@@ -1,0 +1,8 @@
+{
+  "pagination_unique_complete": true,
+  "filters": true,
+  "detail": true,
+  "incident_endpoints": true,
+  "health_readiness": true,
+  "new_application_instances_preserve_ids": true
+}

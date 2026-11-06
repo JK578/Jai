@@ -1,0 +1,13 @@
+{
+  "description": "Synthetic retrieval mechanics fixture; vectors are curated labels, not model embeddings.",
+  "documents": [
+    {"line": 1, "text": "Server terminated unexpectedly", "vector": [1, 0, 0]},
+    {"line": 2, "text": "Request forbidden: access denied", "vector": [0, 1, 0]},
+    {"line": 3, "text": "Server started healthy", "vector": [0, 0, 1]}
+  ],
+  "queries": [
+    {"text": "restart", "vector": [1, 0, 0], "relevant_lines": [1]},
+    {"text": "permissions", "vector": [0, 1, 0], "relevant_lines": [2]},
+    {"text": "healthy", "vector": [0, 0, 1], "relevant_lines": [3]}
+  ]
+}

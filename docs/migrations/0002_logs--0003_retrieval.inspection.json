@@ -1,0 +1,15 @@
+{
+  "source": "0002_logs",
+  "target": "0003_retrieval",
+  "database_identity_sha256": "d6a94d24a71c23147331f1adf8f0cdce987728fa5849581a34ae3603ee6fa1b2",
+  "unrelated_metadata_sha256": "e1f0eea6f5da12dad4c29a2866d4f6e2ceb74673e3d92d76e1a4c08bd1a27505",
+  "unrelated_relation_count": 194,
+  "protected_tables": {
+    "log_files": "c1457ea8f510eda5dd2a2a52f05c8c939d159c741d17839451c4ff69de21a85e",
+    "incidents": "bb7718e03dd06732754bdef6e71f5424487f98dabffa390d53b66a1af9d2ed2a",
+    "log_datasets": "bab1844d871e30f59c85f0cef25b69a7ef3a0bef1768bd5ab9ba4aafa6a81dec",
+    "log_events": "fa36f94b4a3007b84f34f9f1eeb2ab43a221ea18236543c9735e1da4c1c6e5b0",
+    "log_ingestion_runs": "0f8ee36770cb0aea53e6c33d92ab90909dd14bc30c576351e24dd8154e4cdef3",
+    "log_ingestion_errors": "05673f86aceed3e2d3ff8cec84e202842dffb7813e45aa2d187b69869944fb47"
+  }
+}

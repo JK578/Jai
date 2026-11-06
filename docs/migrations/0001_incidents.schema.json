@@ -1,0 +1,73 @@
+{
+  "revision": "0001_incidents",
+  "migration_sha256": "2924d25751840d0b269eea9fbfd4571f6b53c70663b417758d6353de0664db61",
+  "tables": {
+    "incidents": {
+      "columns": {
+        "id": {
+          "type": "UUID",
+          "nullable": false,
+          "default": null
+        },
+        "title": {
+          "type": "VARCHAR(200)",
+          "nullable": false,
+          "default": null
+        },
+        "description": {
+          "type": "TEXT",
+          "nullable": false,
+          "default": null
+        },
+        "severity": {
+          "type": "VARCHAR(8)",
+          "nullable": false,
+          "default": null
+        },
+        "status": {
+          "type": "VARCHAR(13)",
+          "nullable": false,
+          "default": null
+        },
+        "service_name": {
+          "type": "VARCHAR(100)",
+          "nullable": false,
+          "default": null
+        },
+        "created_at": {
+          "type": "TIMESTAMP WITH TIME ZONE",
+          "nullable": false,
+          "default": null
+        },
+        "updated_at": {
+          "type": "TIMESTAMP WITH TIME ZONE",
+          "nullable": false,
+          "default": null
+        }
+      },
+      "checks": [
+        "ck_incidents_description",
+        "ck_incidents_service",
+        "ck_incidents_severity",
+        "ck_incidents_status",
+        "ck_incidents_timestamps",
+        "ck_incidents_title"
+      ],
+      "unique": [],
+      "pk": [
+        "id"
+      ],
+      "indexes": {
+        "ix_incidents_created_id": {
+          "columns": [
+            "created_at",
+            "id"
+          ],
+          "unique": false,
+          "where": null
+        }
+      },
+      "foreign": []
+    }
+  }
+}

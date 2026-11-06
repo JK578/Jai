@@ -13,6 +13,7 @@ from pydantic import BaseModel
 from starlette.middleware.base import RequestResponseEndpoint
 
 from incidentiq.api.incidents import incident_router
+from incidentiq.api.logs import LogReader, log_router
 from incidentiq.application.incidents import (
     IncidentConflict,
     IncidentRepository,
@@ -20,7 +21,9 @@ from incidentiq.application.incidents import (
     IncidentStorageUnavailable,
 )
 from incidentiq.config import Settings, load_settings
+from incidentiq.domain.logs import LogUnavailable
 from incidentiq.infrastructure.database import Database
+from incidentiq.infrastructure.log_repository import PostgresLogRepository
 from incidentiq.infrastructure.memory import InMemoryIncidentRepository
 from incidentiq.infrastructure.postgres import PostgresIncidentRepository
 
@@ -40,6 +43,7 @@ class ReadinessResponse(HealthResponse):
 def create_app(
     settings: Settings | None = None,
     repository: IncidentRepository | None = None,
+    log_repository: LogReader | None = None,
 ) -> FastAPI:
     config = settings if settings is not None else load_settings()
     database = None
@@ -70,6 +74,15 @@ def create_app(
         )
     )
     app.include_router(incident_router(IncidentService(incident_repository)))
+    app.include_router(
+        log_router(
+            log_repository or (PostgresLogRepository(database.sessions) if database else None)
+        )
+    )
+
+    @app.exception_handler(LogUnavailable)
+    async def log_storage_failure(_request: Request, _error: LogUnavailable) -> JSONResponse:
+        return JSONResponse({"detail": "Log storage unavailable"}, status_code=503)
 
     @app.exception_handler(IncidentStorageUnavailable)
     async def storage_failure(

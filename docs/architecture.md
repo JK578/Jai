@@ -56,7 +56,15 @@ Domain rules must not import HTTP frameworks, SQLAlchemy, or provider SDKs.
 Application services coordinate domain rules and infrastructure adapters. Add those
 modules when a real use case needs them; empty layers and generic repository frameworks
 would add maintenance without value. Phase 2A implements incident domain, application,
-HTTP and PostgreSQL adapter layers. Model inference, retrieval and orchestration remain absent.
+HTTP and PostgreSQL adapter layers. Phase 3 adds a provider-independent application model
+gateway, mock and OpenAI infrastructure adapters, and an explicit local CLI. Inference
+is not connected to HTTP routes or the UI. Retrieval and orchestration remain absent.
+See [Phase 3 boundaries and budget lifecycle](phase3-model-gateway.md).
+Phase 4 now has a file-scoped retrieval service, an ephemeral BM25/cosine/RRF reference
+index and a bounded OpenAI embeddings adapter. The PostgreSQL FTS/pgvector adapter and
+applied migration 0003 now support all 2,000 persisted event documents. An explicit CLI
+provides resumable cached indexing, matching-snapshot replay, status and cited hybrid search.
+Retrieval is not wired to HTTP. See [live results and limits](phase4-completion.md).
 
 Auto mode selects PostgreSQL when DATABASE_URL exists; explicit memory remains per-app
 and ephemeral. PostgreSQL incidents survive backend restart/reload. The UI labels the selected mode, validates input,
@@ -66,16 +74,65 @@ See [API contracts](api.md) and [ADR 0005](adr/0005-incident-domain-and-ephemera
 
 See [ADR 0006](adr/0006-postgres-persistence-and-reviewed-migrations.md) for persistence,
 SSL, pooling, transaction/session lifecycle, sanitized errors and migration safeguards.
-Only incidentiq.incidents and public.incidentiq_alembic_version are managed. No unrelated
+IncidentIQ manages its own schema and public.incidentiq_alembic_version. No unrelated
 Supabase objects are migrated. RLS and revoked Data API grants isolate these tables;
-the backend still uses the configured owner role pending Phase 2B least-privilege access.
-No migrations or create_all run on startup. Schema drift stops the initial migration guard.
+the backend still uses the configured owner role pending the access-control milestone.
+No migrations or create_all run on startup. Schema drift stops the revision-aware migration guard.
 
 Next.js and FastAPI are separate local processes, not independently designed microservices.
 Use one backend worker and one frontend dev server on an 8 GB machine. Production
 deployment, authentication, authorization, tenancy and telemetry export remain future work.
 PostgreSQL credentials stay in ignored api.env and backend memory; the browser never receives them.
 Request logs contain method, path, status, and elapsed time; never bodies or query strings.
+
+## Phase 2B log ingestion (implemented and live-validated)
+
+```mermaid
+flowchart LR
+    Public[Pinned Loghub Apache sample] --> Fetch[Explicit fetch CLI]
+    Fetch --> Cache[Ignored cache and license notice]
+    Cache --> Snapshot[Private verified file snapshot]
+    Snapshot --> Parse[Streaming domain parser]
+    Parse --> Worker[Application worker: bounded batches]
+    Worker --> Port[Ingestion repository protocol]
+    Port --> PG[PostgreSQL adapter]
+    PG --> Tx[One transaction: events, diagnostics, counters, checkpoint, lease]
+    Tx --> DB[Five IncidentIQ log tables]
+    GET[Read-only FastAPI log routes] --> PG
+    Review[Reviewed additive migration 0002 applied] --> DB
+```
+
+The CLI runs synchronously with one worker and a NullPool connection; API sessions keep
+their existing pool of two. Together these processes can use three connections. The
+parser has no SQLAlchemy/HTTP dependencies; the application service depends on a write
+port and a private file snapshot helper. Infrastructure owns network fetching and SQL.
+The API has no ingestion write endpoint and does not start a worker.
+
+```mermaid
+erDiagram
+    LOG_DATASETS ||--o{ LOG_FILES : contains
+    LOG_FILES ||--o{ LOG_EVENTS : contains
+    LOG_FILES ||--o{ LOG_INGESTION_RUNS : audited_by
+    LOG_INGESTION_RUNS ||--o{ LOG_INGESTION_ERRORS : samples
+```
+
+File SHA256 plus physical line number defines event identity. Equal messages on different
+lines remain distinct. Events preserve raw text, original level, source timestamp text
+and a naive local timestamp; UTC remains NULL because the source has no zone. The file
+pins parser version, source path and commit. No incident linkage is inferred.
+
+Each batch locks its run, checks the owner token and DB-clock lease, inserts with conflict
+handling, verifies existing event digests, then commits all counts and its checkpoint
+together. A unique partial index permits one running worker globally. Claims additionally
+serialize with a transaction advisory lock. Explicit resume replaces expired ownership;
+the old token cannot write or mark the resumed run failed. Only classified transient
+failures get two retries; a lost acknowledgement causes a checkpoint read before retry.
+
+Stable IDs, provenance, time/level indexes and a literal substring filter provide a future
+MCP tool boundary. RAG chunks can later reference event IDs and source lines. Local-time
+windows and normalized severity support later anomaly features; this unlabelled dataset
+cannot establish anomaly accuracy. Embeddings, FTS, ML and MCP are deliberately absent.
+See [ADR 0007](adr/0007-bounded-log-ingestion.md) and the [runbook](phase2b-ingestion.md).
 
 ## Health interaction
 

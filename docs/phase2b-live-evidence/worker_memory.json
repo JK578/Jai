@@ -1,0 +1,37 @@
+{
+  "method": "Windows GetProcessMemoryInfo; process high-water working set minus working set immediately before ingestion",
+  "samples": [
+    {
+      "worker": "crash",
+      "baseline_working_set_bytes": 94093312,
+      "peak_working_set_bytes": 99971072,
+      "peak_minus_baseline_bytes": 5877760
+    },
+    {
+      "worker": "old",
+      "baseline_working_set_bytes": 94511104,
+      "peak_working_set_bytes": 100184064,
+      "peak_minus_baseline_bytes": 5672960
+    },
+    {
+      "worker": "replay",
+      "baseline_working_set_bytes": 94498816,
+      "peak_working_set_bytes": 100528128,
+      "peak_minus_baseline_bytes": 6029312
+    },
+    {
+      "worker": "resumed",
+      "baseline_working_set_bytes": 94732288,
+      "peak_working_set_bytes": 100564992,
+      "peak_minus_baseline_bytes": 5832704
+    },
+    {
+      "worker": "successor",
+      "baseline_working_set_bytes": 94371840,
+      "peak_working_set_bytes": 100347904,
+      "peak_minus_baseline_bytes": 5976064
+    }
+  ],
+  "maximum_increment_bytes": 6029312,
+  "maximum_whole_process_peak_bytes": 100564992
+}

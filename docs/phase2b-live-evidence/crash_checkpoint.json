@@ -1,0 +1,13 @@
+{
+  "run_id": "60866478-a2a1-4b6f-bce1-bd07213b9056",
+  "line": 250,
+  "lease_expires_at": "2026-10-21T16:39:58.500149+00:00",
+  "memory_baseline": {
+    "working_set_bytes": 94093312,
+    "peak_working_set_bytes": 94093312
+  },
+  "memory_at_checkpoint": {
+    "working_set_bytes": 98430976,
+    "peak_working_set_bytes": 99971072
+  }
+}

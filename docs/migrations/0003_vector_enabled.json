@@ -1,0 +1,9 @@
+{
+  "vector_version": "0.8.2",
+  "vector_schema": "extensions",
+  "revision": "0002_logs",
+  "migration_0003_applied": false,
+  "reviewed_sql_sha256": "81164720ba88927d17bb2df2478747432692c6be5467d54c80ff27670787efa4",
+  "protected_data_unchanged": true,
+  "unrelated_relation_metadata_unchanged": true
+}

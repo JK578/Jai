@@ -1,0 +1,552 @@
+{
+  "revision": "0003_retrieval",
+  "migration_sha256": "ca5affb54a180e4b86b619564dd21a9cf5c20ea2da180e3151b2c73baa7882a0",
+  "tables": {
+    "incidents": {
+      "columns": {
+        "id": {
+          "type": "UUID",
+          "nullable": false,
+          "default": null
+        },
+        "title": {
+          "type": "VARCHAR(200)",
+          "nullable": false,
+          "default": null
+        },
+        "description": {
+          "type": "TEXT",
+          "nullable": false,
+          "default": null
+        },
+        "severity": {
+          "type": "VARCHAR(8)",
+          "nullable": false,
+          "default": null
+        },
+        "status": {
+          "type": "VARCHAR(13)",
+          "nullable": false,
+          "default": null
+        },
+        "service_name": {
+          "type": "VARCHAR(100)",
+          "nullable": false,
+          "default": null
+        },
+        "created_at": {
+          "type": "TIMESTAMP WITH TIME ZONE",
+          "nullable": false,
+          "default": null
+        },
+        "updated_at": {
+          "type": "TIMESTAMP WITH TIME ZONE",
+          "nullable": false,
+          "default": null
+        }
+      },
+      "checks": [
+        "ck_incidents_description",
+        "ck_incidents_service",
+        "ck_incidents_severity",
+        "ck_incidents_status",
+        "ck_incidents_timestamps",
+        "ck_incidents_title"
+      ],
+      "unique": [],
+      "pk": [
+        "id"
+      ],
+      "indexes": {
+        "ix_incidents_created_id": {
+          "columns": [
+            "created_at",
+            "id"
+          ],
+          "unique": false,
+          "where": null
+        }
+      },
+      "foreign": []
+    },
+    "log_datasets": {
+      "columns": {
+        "id": {
+          "type": "UUID",
+          "nullable": false,
+          "default": null
+        },
+        "slug": {
+          "type": "VARCHAR(60)",
+          "nullable": false,
+          "default": null
+        },
+        "manifest_json": {
+          "type": "TEXT",
+          "nullable": false,
+          "default": null
+        }
+      },
+      "checks": [],
+      "unique": [
+        [
+          "slug"
+        ]
+      ],
+      "pk": [
+        "id"
+      ],
+      "indexes": {},
+      "foreign": []
+    },
+    "log_files": {
+      "columns": {
+        "id": {
+          "type": "UUID",
+          "nullable": false,
+          "default": null
+        },
+        "dataset_id": {
+          "type": "UUID",
+          "nullable": false,
+          "default": null
+        },
+        "sha256": {
+          "type": "VARCHAR(64)",
+          "nullable": false,
+          "default": null
+        },
+        "byte_count": {
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null
+        },
+        "line_count": {
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null
+        },
+        "parser_version": {
+          "type": "VARCHAR(40)",
+          "nullable": false,
+          "default": null
+        },
+        "source_path": {
+          "type": "VARCHAR(200)",
+          "nullable": false,
+          "default": null
+        },
+        "source_commit": {
+          "type": "VARCHAR(40)",
+          "nullable": false,
+          "default": null
+        }
+      },
+      "checks": [
+        "ck_log_file_bounds"
+      ],
+      "unique": [
+        [
+          "dataset_id",
+          "sha256"
+        ]
+      ],
+      "pk": [
+        "id"
+      ],
+      "indexes": {},
+      "foreign": [
+        {
+          "columns": [
+            "dataset_id"
+          ],
+          "table": "log_datasets",
+          "schema": "incidentiq",
+          "target": [
+            "id"
+          ],
+          "ondelete": "RESTRICT"
+        }
+      ]
+    },
+    "log_events": {
+      "columns": {
+        "id": {
+          "type": "UUID",
+          "nullable": false,
+          "default": null
+        },
+        "file_id": {
+          "type": "UUID",
+          "nullable": false,
+          "default": null
+        },
+        "source_line": {
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null
+        },
+        "source_time_text": {
+          "type": "VARCHAR(40)",
+          "nullable": false,
+          "default": null
+        },
+        "event_time_local": {
+          "type": "TIMESTAMP WITHOUT TIME ZONE",
+          "nullable": false,
+          "default": null
+        },
+        "event_time_utc": {
+          "type": "TIMESTAMP WITH TIME ZONE",
+          "nullable": true,
+          "default": null
+        },
+        "original_level": {
+          "type": "VARCHAR(16)",
+          "nullable": false,
+          "default": null
+        },
+        "normalized_level": {
+          "type": "VARCHAR(10)",
+          "nullable": false,
+          "default": null
+        },
+        "message": {
+          "type": "TEXT",
+          "nullable": false,
+          "default": null
+        },
+        "raw_line": {
+          "type": "TEXT",
+          "nullable": false,
+          "default": null
+        },
+        "raw_line_sha256": {
+          "type": "BYTEA",
+          "nullable": false,
+          "default": null
+        },
+        "ingested_at": {
+          "type": "TIMESTAMP WITH TIME ZONE",
+          "nullable": false,
+          "default": null
+        }
+      },
+      "checks": [
+        "ck_log_event_level",
+        "ck_log_event_line",
+        "ck_log_event_size",
+        "ck_log_event_unknown_zone"
+      ],
+      "unique": [
+        [
+          "file_id",
+          "source_line"
+        ]
+      ],
+      "pk": [
+        "id"
+      ],
+      "indexes": {
+        "ix_log_event_level": {
+          "columns": [
+            "file_id",
+            "normalized_level",
+            "source_line"
+          ],
+          "unique": false,
+          "where": null
+        },
+        "ix_log_event_time": {
+          "columns": [
+            "file_id",
+            "event_time_local",
+            "source_line"
+          ],
+          "unique": false,
+          "where": null
+        }
+      },
+      "foreign": [
+        {
+          "columns": [
+            "file_id"
+          ],
+          "table": "log_files",
+          "schema": "incidentiq",
+          "target": [
+            "id"
+          ],
+          "ondelete": "RESTRICT"
+        }
+      ]
+    },
+    "log_ingestion_runs": {
+      "columns": {
+        "id": {
+          "type": "UUID",
+          "nullable": false,
+          "default": null
+        },
+        "file_id": {
+          "type": "UUID",
+          "nullable": false,
+          "default": null
+        },
+        "parser_version": {
+          "type": "VARCHAR(40)",
+          "nullable": false,
+          "default": null
+        },
+        "state": {
+          "type": "VARCHAR(12)",
+          "nullable": false,
+          "default": null
+        },
+        "processed": {
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null
+        },
+        "inserted": {
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null
+        },
+        "duplicates": {
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null
+        },
+        "rejected": {
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null
+        },
+        "last_committed_line": {
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null
+        },
+        "started_at": {
+          "type": "TIMESTAMP WITH TIME ZONE",
+          "nullable": false,
+          "default": null
+        },
+        "heartbeat_at": {
+          "type": "TIMESTAMP WITH TIME ZONE",
+          "nullable": false,
+          "default": null
+        },
+        "lease_expires_at": {
+          "type": "TIMESTAMP WITH TIME ZONE",
+          "nullable": false,
+          "default": null
+        },
+        "owner_token": {
+          "type": "UUID",
+          "nullable": false,
+          "default": null
+        },
+        "finished_at": {
+          "type": "TIMESTAMP WITH TIME ZONE",
+          "nullable": true,
+          "default": null
+        },
+        "failure_code": {
+          "type": "VARCHAR(40)",
+          "nullable": true,
+          "default": null
+        }
+      },
+      "checks": [
+        "ck_log_run_counts",
+        "ck_log_run_finish",
+        "ck_log_run_lease",
+        "ck_log_run_state"
+      ],
+      "unique": [],
+      "pk": [
+        "id"
+      ],
+      "indexes": {
+        "uq_log_one_worker": {
+          "columns": [
+            "state"
+          ],
+          "unique": true,
+          "where": "state='running'"
+        },
+        "ix_log_runs_started": {
+          "columns": [
+            "started_at",
+            "id"
+          ],
+          "unique": false,
+          "where": null
+        }
+      },
+      "foreign": [
+        {
+          "columns": [
+            "file_id"
+          ],
+          "table": "log_files",
+          "schema": "incidentiq",
+          "target": [
+            "id"
+          ],
+          "ondelete": "RESTRICT"
+        }
+      ]
+    },
+    "log_ingestion_errors": {
+      "columns": {
+        "run_id": {
+          "type": "UUID",
+          "nullable": false,
+          "default": null
+        },
+        "source_line": {
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null
+        },
+        "sample_number": {
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null
+        },
+        "error_code": {
+          "type": "VARCHAR(40)",
+          "nullable": false,
+          "default": null
+        },
+        "raw_line_sha256": {
+          "type": "BYTEA",
+          "nullable": false,
+          "default": null
+        }
+      },
+      "checks": [
+        "ck_log_error_bounds"
+      ],
+      "unique": [
+        [
+          "run_id",
+          "sample_number"
+        ]
+      ],
+      "pk": [
+        "run_id",
+        "source_line"
+      ],
+      "indexes": {},
+      "foreign": [
+        {
+          "columns": [
+            "run_id"
+          ],
+          "table": "log_ingestion_runs",
+          "schema": "incidentiq",
+          "target": [
+            "id"
+          ],
+          "ondelete": "RESTRICT"
+        }
+      ]
+    },
+    "retrieval_documents": {
+      "columns": {
+        "event_id": {
+          "type": "UUID",
+          "nullable": false,
+          "default": null
+        },
+        "file_id": {
+          "type": "UUID",
+          "nullable": false,
+          "default": null
+        },
+        "model": {
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "default": null
+        },
+        "dimensions": {
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null
+        },
+        "content_sha256": {
+          "type": "VARCHAR(64)",
+          "nullable": false,
+          "default": null
+        },
+        "content": {
+          "type": "TEXT",
+          "nullable": false,
+          "default": null
+        },
+        "embedding": {
+          "type": "VECTOR(512)",
+          "nullable": false,
+          "default": null
+        },
+        "indexed_at": {
+          "type": "TIMESTAMP WITH TIME ZONE",
+          "nullable": false,
+          "default": null
+        }
+      },
+      "checks": [
+        "ck_retrieval_content",
+        "ck_retrieval_model",
+        "ck_retrieval_vector"
+      ],
+      "unique": [],
+      "pk": [
+        "event_id"
+      ],
+      "indexes": {
+        "ix_retrieval_file": {
+          "columns": [
+            "file_id"
+          ],
+          "unique": false,
+          "where": null
+        }
+      },
+      "foreign": [
+        {
+          "columns": [
+            "event_id"
+          ],
+          "table": "log_events",
+          "schema": "incidentiq",
+          "target": [
+            "id"
+          ],
+          "ondelete": "RESTRICT"
+        },
+        {
+          "columns": [
+            "file_id"
+          ],
+          "table": "log_files",
+          "schema": "incidentiq",
+          "target": [
+            "id"
+          ],
+          "ondelete": "RESTRICT"
+        }
+      ]
+    }
+  },
+  "extensions": {
+    "vector": {
+      "schema": "extensions",
+      "version": "0.8.2"
+    }
+  }
+}

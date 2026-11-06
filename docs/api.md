@@ -77,3 +77,35 @@ Invoke-RestMethod "http://127.0.0.1:8000/api/v1/incidents/$($incident.id)"
 
 PostgreSQL data survives backend restart/reload. Explicit memory data does not. Use one worker.
 Do not enter sensitive production incident data in this phase.
+
+## Read-only log API (Phase 2B, requires migration 0002)
+
+These routes are backend-only; no Next.js proxy or log UI is added. Default page size
+is 50, maximum 100. Pages return `{"items": [...], "next_cursor": null}`; the next
+cursor is provided only when another item exists. Missing schema/storage returns
+`503 {"detail":"Log storage unavailable"}`. Invalid query values return 422 and unknown
+detail IDs return 404. Owner tokens and raw database errors never appear in responses.
+
+| GET path | Parameters and behavior |
+|---|---|
+| `/api/v1/log-datasets` | Approved manifest, deterministic dataset/file IDs and registered files |
+| `/api/v1/log-ingestions` | Optional file_id, state; limit and bounded offset cursor (0..10000), newest first |
+| `/api/v1/log-ingestions/{run_id}` | Counts, committed line, lease/heartbeat times, safe failure code; no ownership token |
+| `/api/v1/log-ingestions/{run_id}/errors` | First 100 rejection diagnostics per run; source-line cursor; code/digest only, no raw data |
+| `/api/v1/logs` | Required file_id; optional level, q (1..200 chars), from_local/to_local; limit, source-line cursor (0..2000) |
+| `/api/v1/logs/{log_id}` | Full event including bounded raw_line; unknown ID 404 |
+
+Event pages sort by physical source_line ascending, avoiding timestamp ties. List items
+omit raw_line; detail retains it. `q` is a case-sensitive literal substring, with `%`, `_`
+and escape characters escaped, not an SQL pattern or full-text search. All filters are
+parameterized. Local-time bounds are inclusive, ordered, timezone-free ISO datetimes;
+offsets and Z are rejected. No invented UTC conversion is offered. Normalized levels:
+emergency, alert, critical, error, warning, notice, info, debug. Original level and timestamp
+text remain separate fields; digests serialize as hex.
+
+Run states: running, completed, partial (finished with rejected lines), failed. An expired
+running lease is reported as interrupted without a read-side write. Resume uses the local
+CLI, same run ID, exact file and parser version; successful completed/partial runs can be
+re-ingested as a new audit run with duplicate counts. Run-history offset pages may shift
+when new runs are added; event cursors remain stable. No sensitive raw error excerpts are
+stored, and full rejection counts continue after the 100 diagnostic samples.
