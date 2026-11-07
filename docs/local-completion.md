@@ -1,5 +1,10 @@
 # Local completion — 2026-11-06
 
+Update 2026-11-07: GitHub backend/frontend CI passed at
+[16355d4](https://github.com/JK578/Jai/actions/runs/42350402461). The user deferred
+visual/mobile QA and selected [Phase 8 quality evaluation](phase8-quality.md).
+Earlier statements below describe the narrower verification available at those milestones.
+
 Access control, Phase 6 MCP, and the local Phase 7 delivery workflow are implemented.
 Phase 5 now has an authenticated browser workspace for incidents, source logs, semantic
 search, private investigation history, human approval and approved JSON download.

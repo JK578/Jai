@@ -1,5 +1,17 @@
 # Verification record
 
+## Phase 8 offline quality evaluation — 2026-11-07
+
+Visual/mobile QA is deferred at the user's explicit request. Prior GitHub backend and
+frontend CI passed at [16355d4](https://github.com/JK578/Jai/actions/runs/42350402461).
+Phase 8 adds report-bound review annotations and metrics for finding support, citation
+support and expected fact coverage. Fourteen synthetic cases match their expected
+outcomes; these validate scorer mechanics, not live model accuracy. Changed question,
+report or evidence invalidates annotations; absent/incomplete reviews cannot pass.
+233 offline backend tests passed. A saved real report passed structural checks and has
+a private review template; semantic scores remain null pending human annotation.
+No model calls, database changes or publication actions occurred.
+
 ## GitHub CI handoff — 2026-11-07
 
 Local pre-push checks passed: 217 offline backend tests, project-configured Python

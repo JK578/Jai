@@ -19,6 +19,7 @@ jobs:
       - run: python -m ruff check --config apps/api/pyproject.toml scripts
       - run: python -m ruff format --check --config apps/api/pyproject.toml scripts
       - run: python -m pytest apps/api/tests -m "not database"
+      - run: python -m scripts.evaluate_investigations benchmark
       - run: python -m pip check
   frontend:
     runs-on: windows-latest

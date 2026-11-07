@@ -14,6 +14,7 @@ database access, the investigation UI and read-only MCP are now implemented.
 - [Phase 6 MCP setup and tool boundaries](docs/phase6-mcp.md)
 - [Local standalone frontend packaging and rollback](docs/phase7-frontend-release.md)
 - [Isolated Python environments and rollback](docs/phase7-python-release.md)
+- [Phase 8 investigation quality evaluation](docs/phase8-quality.md)
 
 - [Phase 3 model gateway and configuration](docs/phase3-model-gateway.md)
 - [Phase 4 retrieval completion and CLI usage](docs/phase4-completion.md)
