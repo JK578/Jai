@@ -58,7 +58,12 @@ def main() -> None:
     processes: list[subprocess.Popen[bytes]] = []
     with tempfile.TemporaryFile() as logs:
         try:
-            web_env = {**os.environ, "BACKEND_URL": api_url, "NEXT_TELEMETRY_DISABLED": "1"}
+            web_env = {
+                **os.environ,
+                "BACKEND_URL": api_url,
+                "NEXT_TELEMETRY_DISABLED": "1",
+                "INCIDENTIQ_AUTH_ENABLED": "false",
+            }
             web = subprocess.Popen(
                 [
                     node,
@@ -95,6 +100,7 @@ def main() -> None:
                     env={
                         **os.environ,
                         "INCIDENTIQ_READY": flag,
+                        "INCIDENTIQ_AUTH_ENABLED": "false",
                         "INCIDENTIQ_STORAGE": "postgres" if args.postgres else "memory",
                     },
                     stdout=logs,

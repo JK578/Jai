@@ -35,10 +35,9 @@ def open_index():
         raise ValueError("development_database_required")
     engine = database_engine(settings.database_url, pooled=False)
     with engine.connect() as connection:
-        if (
-            connection.scalar(text("SELECT version_num FROM public.incidentiq_alembic_version"))
-            != "0003_retrieval"
-        ):
+        if connection.scalar(
+            text("SELECT version_num FROM public.incidentiq_alembic_version")
+        ) not in {"0003_retrieval", "0004_access"}:
             engine.dispose()
             raise ValueError("retrieval_migration_required")
     return engine, PostgresRetrievalIndex(sessionmaker(engine, expire_on_commit=False))

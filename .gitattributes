@@ -1,0 +1,2 @@
+# Reviewed Alembic SQL keeps its canonical generated trailing blank line.
+docs/migrations/*.sql whitespace=-blank-at-eof

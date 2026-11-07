@@ -65,6 +65,26 @@ class Database:
         except SQLAlchemyError:
             return False
 
+    def restricted(self) -> bool:
+        from sqlalchemy import text
+
+        try:
+            with self.sessions() as session:
+                self.bound_statement(session)
+                return bool(
+                    session.scalar(
+                        text("""SELECT NOT (rolsuper OR rolbypassrls OR
+                    rolcreaterole OR rolcreatedb OR rolreplication) AND
+                    NOT has_schema_privilege(current_user, 'incidentiq', 'CREATE') AND
+                    NOT has_schema_privilege(current_user, 'public', 'CREATE') AND
+                    NOT EXISTS (SELECT 1 FROM pg_tables WHERE schemaname='incidentiq'
+                                AND tableowner=current_user)
+                    FROM pg_roles WHERE rolname=current_user""")
+                    )
+                )
+        except SQLAlchemyError:
+            return False
+
     @staticmethod
     def bound_statement(session: Session) -> None:
         from sqlalchemy import text

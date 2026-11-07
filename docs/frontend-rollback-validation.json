@@ -1,0 +1,21 @@
+{
+  "verified_at_utc": "2026-11-07T06:35:23.263850+00:00",
+  "frontend_artifact_rollback": true,
+  "bundled_next_dependencies": true,
+  "workspace_node_modules_required": false,
+  "baseline_manifest_sha256": "ab2c02a59935f9fb65d109ac95d15086194ec500e18697e3c38479cf850b56f5",
+  "candidate_manifest_sha256": "4092b937cf57a8f9352fc3f324956ba1871720051cea7dbd71c6288eb72cfd7d",
+  "fault_injected_candidate": true,
+  "status_sequence": [
+    200,
+    503,
+    200
+  ],
+  "session_survived_rollback": true,
+  "authenticated_proxy_and_tenant_catalog": true,
+  "static_assets_checked": 6,
+  "environment_files_excluded": true,
+  "paid_model_calls": 0,
+  "node_runtime_shared": true,
+  "browser_visual_qa": false
+}

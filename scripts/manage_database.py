@@ -85,6 +85,17 @@ def index_predicate(value: object) -> str | None:
     return re.sub(r"[\s()]", "", str(value).replace("::text", ""))
 
 
+def policy_definitions(connection: Connection) -> list:
+    return [
+        list(row)
+        for row in connection.execute(
+            text("""SELECT tablename, policyname,
+        permissive, roles::text, cmd, qual, with_check FROM pg_policies
+        WHERE schemaname='incidentiq' ORDER BY tablename, policyname""")
+        )
+    ]
+
+
 def verify_schema(connection: Connection, revision: str) -> None:
     if current_revision(connection) != revision:
         raise SchemaSafetyStop("Database revision differs from requested source/target")
@@ -92,6 +103,16 @@ def verify_schema(connection: Connection, revision: str) -> None:
         pristine(connection)
         return
     reviewed = snapshot(revision)
+    if "policies" in reviewed and policy_definitions(connection) != reviewed["policies"]:
+        raise SchemaSafetyStop("RLS policies differ from reviewed security snapshot")
+    if reviewed.get("runtime_role"):
+        role = connection.execute(
+            text("""SELECT rolcanlogin, rolsuper, rolcreatedb,
+            rolcreaterole, rolreplication, rolbypassrls FROM pg_roles
+            WHERE rolname='incidentiq_runtime'""")
+        ).first()
+        if role is None or any(role):
+            raise SchemaSafetyStop("Runtime group role differs from reviewed security boundary")
     for extension, requirement in reviewed.get("extensions", {}).items():
         installed = connection.execute(
             text("""SELECT e.extversion, n.nspname

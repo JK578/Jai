@@ -24,6 +24,13 @@ npm-debug.log*
 .test-build/
 .pytest-db-*/
 .pytest-phase*/
+.pytest-access*/
+.pytest-all-milestones*/
 .pytest-retrieval-live*/
 .cache/loghub/
 .cache/retrieval/
+.cache/investigations/
+.cache/phase5-wheels/
+.cache/access/
+.cache/investigations-web/
+.cache/releases/

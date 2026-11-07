@@ -1,0 +1,24 @@
+{
+  "verified_at": "2026-11-07",
+  "backend_source_artifact_rollback": true,
+  "baseline_manifest_sha256": "3937bdccc61bf4a8c6616ad8e8fa9c599e7f6dd7ad0c7bd8eafa39a619b98e1e",
+  "candidate_manifest_sha256": "9ac5244759352f1cc08087b8e1c2e333c539effef854b9216a13330c54bd209a",
+  "fault_injected_candidate": true,
+  "readiness_sequence": [
+    200,
+    503,
+    200
+  ],
+  "authenticated_reads_on_all_artifacts": true,
+  "unauthenticated_requests_denied": true,
+  "private_checkpoint_preserved": true,
+  "imports_resolved_inside_artifacts": [
+    "apps/api/src/incidentiq/__init__.py",
+    "apps/api/src/incidentiq/__init__.py",
+    "apps/api/src/incidentiq/__init__.py"
+  ],
+  "shared_python_environment": true,
+  "frontend_artifact_rollback": false,
+  "schema_changed": false,
+  "paid_model_calls": 0
+}

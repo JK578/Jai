@@ -1,0 +1,12 @@
+{
+  "authenticated_api": true,
+  "runtime_tenant_isolation": true,
+  "digest_bound_approval": true,
+  "mcp_stdio": true,
+  "production_frontend_login_proxy_logout": true,
+  "token_revocation": true,
+  "configuration_rollback": true,
+  "paid_model_calls": 0,
+  "cloud_deployment": false,
+  "browser_visual_qa": false
+}

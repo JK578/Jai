@@ -39,12 +39,9 @@ def storage(tmp_path):
         with engine.connect() as connection:
             outer = connection.begin()
             try:
-                assert (
-                    connection.scalar(
-                        text("SELECT version_num FROM public.incidentiq_alembic_version")
-                    )
-                    == "0003_retrieval"
-                )
+                assert connection.scalar(
+                    text("SELECT version_num FROM public.incidentiq_alembic_version")
+                ) in {"0003_retrieval", "0004_access"}
                 sessions = sessionmaker(
                     bind=connection,
                     expire_on_commit=False,

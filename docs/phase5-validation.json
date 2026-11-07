@@ -1,0 +1,18 @@
+{
+  "mock_fresh_process_resume": true,
+  "stale_approval_rejected": true,
+  "mock_approved_publication": true,
+  "rejection_no_publication": true,
+  "no_repeated_paid_nodes_on_review": true,
+  "live": {
+    "run_id": "92ff1dd9-c93f-4ae9-934e-abd6fe4bdf4d",
+    "status": "awaiting_approval",
+    "published": false,
+    "report_sha256": "e413f3b269eba8ce37ea51f2db56b432a9c31b860a830c9248fcdcf035352c08",
+    "citations_verified": 5,
+    "fresh_process_state_equal": true,
+    "initial_budget_microusd": 20000,
+    "remaining_conservative_microusd": 16158,
+    "checkpoint_bytes": 57344
+  }
+}

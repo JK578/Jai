@@ -1,0 +1,8 @@
+{
+  "user_id": "5e6d0ccd-87e8-495c-a03b-e435e5bb59ff",
+  "tenant_id": "0e27365b-c3c7-4243-aa2a-6ab0dc139f00",
+  "expires_in_hours": 24,
+  "restricted_runtime_verified": true,
+  "ssl_policy": "verify-full",
+  "auth_enabled": true
+}

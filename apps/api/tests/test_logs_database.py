@@ -44,7 +44,7 @@ def storage(tmp_path):
             revision = connection.scalar(
                 text("SELECT version_num FROM public.incidentiq_alembic_version")
             )
-            assert revision in {"0002_logs", "0003_retrieval"}, (
+            assert revision in {"0002_logs", "0003_retrieval", "0004_access"}, (
                 "Apply the reviewed migration separately first"
             )
             # Commits release savepoints; the outer transaction rolls back all test rows.

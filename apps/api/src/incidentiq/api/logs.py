@@ -40,6 +40,8 @@ def log_router(repository: LogReader | None) -> APIRouter:
         response.headers["Cache-Control"] = "no-store"
         source = manifest()
         files = read("files", limit=100)
+        if not files:
+            return Page(items=[])
         return Page(
             items=[
                 {

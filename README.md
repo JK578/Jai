@@ -6,10 +6,18 @@ SQLAlchemy. Alembic owns schema changes; startup never creates tables or runs mi
 With DATABASE_URL set, auto storage uses PostgreSQL. Explicit memory mode remains for
 offline demos/tests. Phase 3 adds an offline-tested model gateway with mock and OpenAI
 adapters and an explicit local CLI. Phase 4 adds live-validated persistent hybrid log
-retrieval and cited CLI search. MCP and LangGraph remain future work.
+retrieval and cited CLI search. Phase 5 adds a checkpointed LangGraph investigation CLI
+with human review before local report publication. Local authentication, tenant-scoped
+database access, the investigation UI and read-only MCP are now implemented.
+
+- [Current local setup, completion evidence and remaining verification limits](docs/local-completion.md)
+- [Phase 6 MCP setup and tool boundaries](docs/phase6-mcp.md)
+- [Local standalone frontend packaging and rollback](docs/phase7-frontend-release.md)
+- [Isolated Python environments and rollback](docs/phase7-python-release.md)
 
 - [Phase 3 model gateway and configuration](docs/phase3-model-gateway.md)
 - [Phase 4 retrieval completion and CLI usage](docs/phase4-completion.md)
+- [Phase 5 investigation workflow, setup and verification](docs/phase5-investigations.md)
 
 - [Windows setup and commands](docs/development.md)
 - [Architecture diagrams](docs/architecture.md)
@@ -102,4 +110,5 @@ is applied; the pinned sample has 2,000 persisted events, with duplicate-safe re
 real worker interruption/resume, fencing and backend restart verified. Measured log
 storage is 1.22 MiB and maximum worker memory increase is 5.75 MiB. See the
 [live validation report](docs/phase2b-live-validation.md). Do not reapply the migration
-or rerun the one-time drill. There is no log UI or worker on API startup.
+or rerun the one-time drill. Logs are now available in the authenticated workspace;
+no ingestion worker runs on API startup.

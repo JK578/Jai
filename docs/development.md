@@ -1,5 +1,8 @@
 # Native Windows developer setup
 
+For the current authenticated workspace and MCP setup, start with
+[the local completion/runbook](local-completion.md). Older milestone commands below are historical.
+
 ## Persistent storage and reviewed migrations
 
 When DATABASE_URL is saved in ignored `apps/api/api.env`, default auto mode uses PostgreSQL.
@@ -7,11 +10,11 @@ Set INCIDENTIQ_STORAGE=memory for an offline demo or postgres to require persist
 fail configuration validation when the URL is missing. No silent fallback occurs after
 selecting PostgreSQL. Keep URLs out of shell arguments and NEXT_PUBLIC variables.
 
-The configured development database already has revision 0002_logs applied. Do not
+The configured development database now has revision 0004_access applied. Do not
 reapply, stamp or reset it. To verify its state read-only:
 
 ```powershell
-.\.venv\Scripts\python.exe -m scripts.manage_database status --from-revision 0001_incidents --to-revision 0002_logs
+.\.venv\Scripts\python.exe -m scripts.manage_database status --from-revision 0003_retrieval --to-revision 0004_access
 ```
 
 For a genuinely fresh development database only:
@@ -85,7 +88,8 @@ node --version
 npm.cmd --version
 # Existing .venv is already Python 3.15. Only run this if creating a fresh environment:
 # & 'C:\Python315\python.exe' -m venv .venv
-.\.venv\Scripts\python.exe -m pip install --only-binary=:all: -r apps/api/requirements-dev.lock.txt
+.\.venv\Scripts\python.exe scripts/build_phase5_wheels.py
+.\.venv\Scripts\python.exe -m pip install --only-binary=:all: --find-links .cache/phase5-wheels -r apps/api/requirements-dev.lock.txt
 .\.venv\Scripts\python.exe -m pip install --no-deps -e apps/api
 if (!(Test-Path apps/api/api.env)) { Copy-Item apps/api/.env.example apps/api/api.env }
 if (!(Test-Path apps/web/.env.local)) { Copy-Item apps/web/.env.example apps/web/.env.local }
@@ -163,7 +167,10 @@ For intentional backend updates, edit pyproject.toml, install `-e 'apps/api[dev]
 incidentiq-api` (UTF-8). For frontend updates, edit package.json and use npm install,
 review package-lock.json, then run checks. Commit both manifests and locks.
 Binary-only installation intentionally fails if a compatible Python 3.15 wheel is absent;
-investigate that specific dependency rather than downgrading silently.
+investigate that specific dependency rather than downgrading silently. Phase 5 adds the
+documented narrow exception for PyYAML 6.0.3 (pure Python) and zstandard 0.25.0 (existing
+Visual Studio C++ tools), built by `scripts/build_phase5_wheels.py`. Fresh Windows setup
+requires those build tools. See [workflow setup and compatibility evidence](phase5-investigations.md).
 
 Git 2.37 reported unsafe ownership in this execution environment. Confirm repository
 ownership locally before changing trust settings; no global Git configuration was modified.

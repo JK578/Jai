@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import select, text
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session, sessionmaker
 
@@ -24,13 +24,20 @@ def to_domain(row: IncidentRow) -> Incident:
 
 
 class PostgresIncidentRepository:
-    def __init__(self, sessions: sessionmaker[Session]) -> None:
+    def __init__(self, sessions: sessionmaker[Session], tenant_id: UUID | None = None) -> None:
         self._sessions = sessions
+        self._tenant_id = tenant_id
 
     def add(self, incident: Incident) -> None:
         try:
             with self._sessions.begin() as session:
                 Database.bound_statement(session)
+                if self._tenant_id is not None:
+                    session.execute(
+                        text("""INSERT INTO incidentiq.resource_owners
+                        (kind, resource_id, tenant_id) VALUES ('incident', :id, :tenant)"""),
+                        {"id": incident.id, "tenant": self._tenant_id},
+                    )
                 session.add(
                     IncidentRow(
                         id=incident.id,
@@ -53,10 +60,12 @@ class PostgresIncidentRepository:
             with self._sessions() as session:
                 Database.bound_statement(session)
                 rows = session.scalars(
-                    select(IncidentRow).order_by(
+                    select(IncidentRow)
+                    .order_by(
                         IncidentRow.created_at.desc(),
                         IncidentRow.id.desc(),
                     )
+                    .limit(100)
                 )
                 return [to_domain(row) for row in rows]
         except SQLAlchemyError, ValueError:

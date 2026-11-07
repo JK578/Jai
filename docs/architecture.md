@@ -1,5 +1,20 @@
 # IncidentIQ architecture
 
+## Current local workspace
+
+The Next.js server authenticates a local bearer credential through FastAPI and stores it
+in an HttpOnly cookie. Same-origin proxies forward it server-side. API middleware checks
+expiry, revocation and scopes; transaction-local tenant settings plus PostgreSQL RLS filter
+incident, log and retrieval access using a restricted runtime role. Operator migration and
+ingestion CLIs retain a separate owner connection.
+
+Authenticated workspace routes provide scoped semantic search and per-user LangGraph
+investigations. Private SQLite checkpoints and a daily budget ledger remain local.
+Reports pause for digest-bound human approval before publication. A separate MCP stdio
+process exposes only bounded read tools through the same authenticated API. See
+[current controls and evidence](local-completion.md) and [MCP boundaries](phase6-mcp.md).
+The foundation diagrams below describe earlier architectural slices.
+
 ## Implemented foundation
 
 ```mermaid
@@ -78,6 +93,21 @@ IncidentIQ manages its own schema and public.incidentiq_alembic_version. No unre
 Supabase objects are migrated. RLS and revoked Data API grants isolate these tables;
 the backend still uses the configured owner role pending the access-control milestone.
 No migrations or create_all run on startup. Schema drift stops the revision-aware migration guard.
+
+## Phase 5 investigation execution
+
+The explicit investigation CLI now invokes a LangGraph graph over the existing retrieval
+and model ports. It reserves per-run budgets, retrieves up to five file-scoped events,
+drafts a bounded JSON report, validates citation identities and interrupts for human
+review. Approval is tied to the report/context hash before the only implemented effect:
+idempotent private local report publication. It cannot run operational tools or modify incidents.
+
+The standard SQLite checkpointer and a call journal live under ignored per-run cache
+directories, with process locks and a 32-run retention boundary. Completed paid nodes
+are replayed from the journal; uncertain calls require explicit operator retry with an
+additional persistent budget reservation. This local development persistence does not
+add Supabase tables, migrations or a checkpoint service. HTTP/UI integration and hosted
+multi-user checkpointing are separate work. See [Phase 5 implementation and live validation](phase5-investigations.md).
 
 Next.js and FastAPI are separate local processes, not independently designed microservices.
 Use one backend worker and one frontend dev server on an 8 GB machine. Production

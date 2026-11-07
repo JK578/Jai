@@ -30,10 +30,10 @@ def test_not_ready_does_not_break_liveness() -> None:
         assert response.json()["status"] == "not_ready"
 
 
-def test_environment_overrides(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_environment_overrides(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.setenv("INCIDENTIQ_READY", "false")
     monkeypatch.setenv("INCIDENTIQ_ENV", "test")
-    assert load_settings() == Settings(environment="test", ready=False)
+    assert load_settings() == Settings(environment="test", ready=False, data_dir=tmp_path / "data")
 
 
 def test_readiness_requires_startup_and_resets_on_shutdown() -> None:
@@ -81,6 +81,6 @@ def test_api_env_loading_and_environment_precedence(
     monkeypatch.setattr(config, "ENV_FILE", path)
     monkeypatch.delenv("INCIDENTIQ_ENV", raising=False)
     monkeypatch.delenv("INCIDENTIQ_READY", raising=False)
-    assert load_settings() == Settings(environment="test", ready=False)
+    assert load_settings() == Settings(environment="test", ready=False, data_dir=tmp_path / "data")
     monkeypatch.setenv("INCIDENTIQ_READY", "true")
     assert load_settings().ready is True

@@ -2,8 +2,27 @@
 
 Backend: `http://127.0.0.1:8000`. OpenAPI UI: `/docs`; schema: `/openapi.json`.
 The UI uses the same paths on its own origin via Next.js forwarding handlers.
-This is a local, unauthenticated development API. Auto mode uses PostgreSQL when DATABASE_URL
-is configured; explicit memory mode remains available for offline tests/demos.
+The configured local workspace requires bearer authentication on `/api/` routes. Missing,
+expired or revoked credentials return 401; insufficient scopes return 403. Health probes
+remain public. Tenant-scoped RLS uses a restricted database login. Explicit unauthenticated
+memory mode remains available for isolated tests. See [local setup](local-completion.md).
+
+`GET /api/v1/auth/session` returns user/tenant IDs and scopes, never the credential.
+Incident lists return at most the latest 100 visible rows. Protected responses use no-store.
+
+| Workspace method/path | Scope | Behavior |
+|---|---|---|
+| POST /api/v1/search | search:run | Question up to 800 UTF-8 bytes, top five scoped citations; reserves embedding budget |
+| GET /api/v1/investigations | investigations:read | Up to 32 private user-owned summaries |
+| POST /api/v1/investigations | investigations:write | Question and provider mock/openai; mock default; live reserves up to $0.02 |
+| GET /api/v1/investigations/{uuid} | investigations:read | Private checkpoint status/report/evidence |
+| POST /api/v1/investigations/{uuid}/approve or /reject | investigations:approve | Exact report_sha256 required; mismatches return 409 |
+| POST /api/v1/investigations/{uuid}/retry or /resume | investigations:write | Explicit bounded retry or continuation; invalid state returns 409 |
+
+Cross-user investigation IDs return 404. Daily model-budget or concurrency/rate limits
+return 429, bodies over 64 KiB return 413, and sanitized availability failures return 503.
+Next.js exposes workspace routes under `/api/workspace/`, reading the HttpOnly session
+cookie server-side. Login/logout and mutations require the same local origin.
 
 | Method | Path | Success | Failure |
 |---|---|---|---|

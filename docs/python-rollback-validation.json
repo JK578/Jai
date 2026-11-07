@@ -1,0 +1,25 @@
+{
+  "verified_at_utc": "2026-11-07T06:50:58.107606+00:00",
+  "isolated_python_environment_rollback": true,
+  "offline_hash_required_install": true,
+  "wheelhouse_sha256": "cf7abbf67fd7670b87d1598232af88a0d443c7e3b202ed9de2c1060a63374ecb",
+  "baseline_environment_sha256": "68e5a6d842315f9a9d2692774b6acf0a336ecb1e1eceb03c0bc2f5c330b9f22e",
+  "candidate_environment_sha256": "8ecefb905d1341334198a7af3fd1a04f8ca139d57bcd5fcfa274158c8e9201f1",
+  "source_sha256": "d9fc347c7fcd4559073e1e886474d58aac2c2ef9c5285c9a55ca5fcbfe2c75a8",
+  "tampered_dependency_rejected_before_execution": true,
+  "sequence": [
+    "baseline_ready",
+    "candidate_rejected",
+    "baseline_restored_ready"
+  ],
+  "authenticated_reads": true,
+  "unauthenticated_reads_denied": true,
+  "checkpoint_preserved": true,
+  "budget_ledger_preserved": true,
+  "unauthorized_approval_denied": true,
+  "development_site_packages_used": false,
+  "host_python_runtime_shared": true,
+  "dependency_version_upgrade_tested": false,
+  "paid_model_calls": 0,
+  "schema_changes": false
+}

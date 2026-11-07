@@ -21,7 +21,7 @@ class InMemoryIncidentRepository:
         with self._lock:
             return sorted(
                 self._items.values(), key=lambda item: (item.created_at, item.id), reverse=True
-            )
+            )[:100]
 
     def get(self, incident_id: UUID) -> Incident | None:
         with self._lock:
