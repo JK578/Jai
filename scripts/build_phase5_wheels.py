@@ -9,6 +9,20 @@ ROOT = Path(__file__).resolve().parents[1]
 WHEELS = ROOT / ".cache/phase5-wheels"
 
 
+def compiler_environment(vcvars: Path):
+    # Passing this command through list2cmdline adds backslashes before CMD quotes.
+    # CMD /s removes the outer pair and leaves the batch path's quotes intact.
+    command = f'cmd.exe /d /s /c ""{vcvars}" >nul && set"'
+    setup = subprocess.check_output(command, text=True)
+    environment = dict(os.environ)
+    for line in setup.splitlines():
+        if "=" in line and not line.startswith("="):
+            key, value = line.split("=", 1)
+            environment[key] = value
+    environment["DISTUTILS_USE_SDK"] = "1"
+    return environment
+
+
 def build():
     WHEELS.mkdir(parents=True, exist_ok=True)
     if not list(WHEELS.glob("pyyaml-6.0.3-py3-none-any.whl")):
@@ -45,13 +59,6 @@ def build():
         vcvars = Path(install) / "VC/Auxiliary/Build/vcvars64.bat"
         if not install or not vcvars.is_file():
             raise RuntimeError("Visual Studio C++ tools required for zstandard on Python 3.15")
-        setup = subprocess.check_output(["cmd", "/d", "/c", f'"{vcvars}" >nul && set'], text=True)
-        environment = dict(os.environ)
-        for line in setup.splitlines():
-            if "=" in line and not line.startswith("="):
-                key, value = line.split("=", 1)
-                environment[key] = value
-        environment["DISTUTILS_USE_SDK"] = "1"
         subprocess.run(
             [
                 sys.executable,
@@ -64,7 +71,7 @@ def build():
                 str(WHEELS),
                 "zstandard==0.25.0",
             ],
-            env=environment,
+            env=compiler_environment(vcvars),
             check=True,
         )
     print("Pinned Python 3.15 compatibility wheels are ready.")
