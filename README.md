@@ -1,6 +1,9 @@
 # IncidentIQ
 
 AI-powered incident investigation platform for learning and portfolio development.
+For a fresh Windows environment, see [the quick start](docs/quickstart.md):
+`py -3.15 scripts/dev.py setup`, then `py -3.15 scripts/dev.py run` for the configured
+full workspace or add `--basic` for a credential-free incident-only demo.
 Phase 2A persists incident creation, listing and details in Supabase PostgreSQL through
 SQLAlchemy. Alembic owns schema changes; startup never creates tables or runs migrations.
 With DATABASE_URL set, auto storage uses PostgreSQL. Explicit memory mode remains for

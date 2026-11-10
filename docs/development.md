@@ -1,5 +1,8 @@
 # Native Windows developer setup
 
+For a fresh environment and a single launcher for both services, use the
+[quick start](quickstart.md). Historical manual commands below remain reference material.
+
 For the current authenticated workspace and MCP setup, start with
 [the local completion/runbook](local-completion.md). Older milestone commands below are historical.
 
